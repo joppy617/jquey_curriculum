@@ -24,6 +24,21 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      // jQuery(function() {
+      //   $('.nav li').on('click', function() {
+      //     var index = $(this).index();
+      //     $('.contents > li').addClass('is-hidden');
+      //     $('.contents > li').eq(index).removeClass('is-hidden');
+      //   });
+      // });
+      //
+      jQuery(function() {
+        $('.nav > li').click(function() {
+          var index = $(this).index();
+          $('.contents > li').addClass('is-hidden');
+          $('.contents > li').eq(index).removeClass('is-hidden');
+        });
+      });
       // 今回やるのはタブメニューです。
       // navの小要素であるliをクリックして、contents内の小要素であるli要素を表示させる。
       // .index() 要素のindexを取得します。

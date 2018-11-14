@@ -69,6 +69,104 @@
 </div>
 <script src="../../common/js/jquery.js"></script>
 <script>
+  // jQuery(function(){
+  //   $('#q1').css('color','red');
+
+  //   $('#q2').click(function() {
+  //     $(this).css('background-color', 'pink');
+  //   });
+
+  //   $('#q3').click(function() {
+  //     $(this).fadeOut(2000);
+  //   });
+
+  //   $('#q4').on('click',function() {
+  //     $(this).prepend('DOMの中の前');
+  //     $(this).before('DOMの前');
+  //     $(this).append('DOMの中の後');
+  //     $(this).after('DOMの後');
+  //   });
+
+  //   $('#q5').click(function() {
+  //     $(this).addClass('large');
+  //   });
+
+  //   $('#q6').click(function() {
+  //     $(this).animate({'margin-top': '100px','margin-left': '100px'}, 2000);
+  //   });
+
+  //   $('#q7 li').click(function() {
+  //     var index = $(this).index();
+  //     alert(index);
+  //   });
+
+  //   $('#q8').hover(function() {
+  //     $(this).addClass('large');
+  //   }, function() {
+  //     $(this).removeClass('large');
+  //   });
+
+  //   $('#q9').click(function() {
+  //     var text = $(this).data('text');
+  //     console.log(text);
+  //   });
+
+  //   $('#q10 li').on('click', function() {
+  //     var index = $(this).index();
+  //     console.log(index);
+  //     $('#q11 li').eq(index).addClass('large');
+  //   });
+
+
+
+  // });
+   jQuery(function() {
+    $('#q1').css('color', 'red');
+
+    $('#q2').click(function() {
+      $(this).css('background', 'pink');
+    });
+
+    $('#q3').click(function() {
+      $(this).fadeOut(2000);
+    });
+
+    $('#q4').click(function() {
+      $(this).before('DOMの前');
+      $(this).prepend('DOMの中の前');
+      $(this).after('DOMの後');
+      $(this).append('DOMの中の後');
+    });
+
+    $('#q5').click(function() {
+      $(this).addClass('large');
+    });
+
+    $('#q6').click(function() {
+      $(this).animate({'margin-top': '100px', 'margin-left': '100px'}, 2000);
+    });
+
+    $('#q7 > li').click(function() {
+      var index = $(this).index();
+      alert(index);
+    });
+
+    $('#q8').hover(function() {
+      $(this).addClass('large');
+    }, function() {
+      $(this).removeClass('large');
+    });
+
+    $('#q9').click(function() {
+      var data = $(this).data('text');
+      console.log(data);
+    });
+
+    $('#q10 > li').click(function() {
+      var index = $(this).index();
+      $('#q11 > li').eq(index).addClass('large');
+    });
+   });
 // 第1問  id='q1'の要素の文字色を赤色にせよ。
 // 第2問  id='q2'の要素をクリックしたら背景色をピンクにせよ。
 // 第3問  id='q3'の要素をクリックしたら2秒かけてフェードアウトさせよ。
@@ -82,3 +180,4 @@
 </script>
 </body>
 </html>
+<!--  -->
