@@ -21,11 +21,82 @@
           </div>
           <button id="js-search-button" class="search__btn">検索する</button>
         </div>
-        <ul class="lists"></ul>
       </div>
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      jQuery(function() {
+          var preword = '';
+          page = 1;
+          $('.search').after('<ul class="lists"></ul>');
+        $('#js-search-button').on('click', function() {
+          var searchword = $('#js-search-word').val();
+          if (preword === searchword) {
+            page++;
+          } else {
+            preword = searchword;
+            page = 1;
+          }
+          console.log(page);
+          if (page === 1) {
+          $('.lists__item').remove();
+          }
+          $('.result').remove();
+          $('.datacomment').remove();
+          $.ajax({
+            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+            type: 'GET',
+            datatype: 'json',
+            data: {
+            // 区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+            keyword: searchword,
+            applicationId: '1019399324990976605', // (今回はこのIDを使用してください)
+            booksGenreId: '001',
+            page: page,
+            hits: 20
+            },
+            }).done(function(data) {
+                // この中にデータ取得後の動きを記述していきます。
+                console.log(data);
+                if (data.count === 0) {
+                  $('.lists').before('<div class="result">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</div>');
+                  $('.result').css('text-align', 'center').css('margin-bottom', '50px');
+                }
+              $.each(data.Items, function(index, item) {
+                // console.log(index);
+                console.log(item);
+                $('.lists').prepend("<li class='lists__item'><div class='lists__item__inner'><a href='' class='lists__item__link' target='_blank'><img src='" + item.Item.largeImageUrl + "' class='lists__item__img' alt=''><p class='lists__item__detail'>作品名：" + item.Item.title + "</p><p class='lists__item__detail'>作者：" + item.Item.author + "</p><p class='lists__item__detail'>出版社：" + item.Item.publishrName + "</p></a></div></li>");
+
+
+                // $('.lists').after("<li class='lists__item'></li>");
+                // $('.lists__item').prepend("<div class='lists__item__inner'></div>");
+                // $('.lists__item__inner').prepend("<a href='' class='lists__item__link' target='_blank'></a>");
+                // $('.lists__item__link').prepend("<img src='" + item.Item.largeImageUrl + "' class='lists__item__img' alt=''>");
+                // $('.lists__item__img').after("<p class='lists__item__detail'>作品名：" + item.Item.title + "</p>");
+                // $('.lists__item__img').after("<p class='lists__item__detail'>作者：" + item.Item.author + "</p>");
+                // $('.lists__item__img').after("<p class='lists__item__detail'>出版社：" + item.Item.publishrName + "</p>");
+              });
+            }).fail(function(err) {
+              console.log(err);
+              // var error = '';
+              if (err.responseJSON.error_description === "keyword must be set") {
+              var error = $('.search').after('<div class="datacomment"><p class="message">文字を入力してください。</p></div>');
+              error;
+              } else {
+              var error = $('.search').after('<div class="datacomment"><p class="message">データ通信できませんでした<br>接続を確認してください。</p></div>');
+              error;
+              }
+            });
+          });
+      });
+
+
+      // httpメソッドのGET POST
+      // apiの説明
+      // 検索結果２０件
+      // ０件の時の処理
+      // 通信失敗時の処理
+      // 関数を小分けに
       // 楽天ブックスの総合検索APIを使って製作してください。
       // answerの挙動を良く見てね！
       //
@@ -41,7 +112,7 @@
       //    <a href='' class='lists__item__link' target='_blank'>
       //      <img src='' class='lists__item__img' alt=''>
       //      <p class='lists__item__detail'>作品名：</p>
-      //      <p class='lists__item__detail'>作者　：</p>
+      //      <p class='lists__item__detail'>作者 ：</p>
       //      <p class='lists__item__detail'>出版社：</p>
       //    </a>
       //  </div>
