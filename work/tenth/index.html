@@ -26,24 +26,13 @@
     <script src="../../common/js/jquery.js"></script>
     <script>
       jQuery(function() {
-          var preword = '';
-          page = 1;
-          $('.search').after('<ul class="lists"></ul>');
-        $('#js-search-button').on('click', function() {
-          var searchword = $('#js-search-word').val();
-          if (preword === searchword) {
-            page++;
-          } else {
-            preword = searchword;
-            page = 1;
-          }
-          console.log(page);
-          if (page === 1) {
-          $('.lists__item').remove();
-          }
-          $('.result').remove();
-          $('.datacomment').remove();
-          $.ajax({
+        $('.search').after('<ul class="lists"></ul>');
+        var preword = '';
+        var page = 1;
+
+        function request(searchword) {
+         page_count(searchword);
+           $.ajax({
             url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
             type: 'GET',
             datatype: 'json',
@@ -55,38 +44,87 @@
             page: page,
             hits: 20
             },
+
             }).done(function(data) {
                 // この中にデータ取得後の動きを記述していきます。
-                console.log(data);
-                if (data.count === 0) {
-                  $('.lists').before('<div class="result">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</div>');
-                  $('.result').css('text-align', 'center').css('margin-bottom', '50px');
-                }
-              $.each(data.Items, function(index, item) {
-                // console.log(index);
-                console.log(item);
-                $('.lists').prepend("<li class='lists__item'><div class='lists__item__inner'><a href='' class='lists__item__link' target='_blank'><img src='" + item.Item.largeImageUrl + "' class='lists__item__img' alt=''><p class='lists__item__detail'>作品名：" + item.Item.title + "</p><p class='lists__item__detail'>作者：" + item.Item.author + "</p><p class='lists__item__detail'>出版社：" + item.Item.publishrName + "</p></a></div></li>");
-
-
-                // $('.lists').after("<li class='lists__item'></li>");
-                // $('.lists__item').prepend("<div class='lists__item__inner'></div>");
-                // $('.lists__item__inner').prepend("<a href='' class='lists__item__link' target='_blank'></a>");
-                // $('.lists__item__link').prepend("<img src='" + item.Item.largeImageUrl + "' class='lists__item__img' alt=''>");
-                // $('.lists__item__img').after("<p class='lists__item__detail'>作品名：" + item.Item.title + "</p>");
-                // $('.lists__item__img').after("<p class='lists__item__detail'>作者：" + item.Item.author + "</p>");
-                // $('.lists__item__img').after("<p class='lists__item__detail'>出版社：" + item.Item.publishrName + "</p>");
-              });
+                search_result(data, searchword);
             }).fail(function(err) {
-              console.log(err);
-              // var error = '';
-              if (err.responseJSON.error_description === "keyword must be set") {
-              var error = $('.search').after('<div class="datacomment"><p class="message">文字を入力してください。</p></div>');
-              error;
-              } else {
-              var error = $('.search').after('<div class="datacomment"><p class="message">データ通信できませんでした<br>接続を確認してください。</p></div>');
-              error;
-              }
+                error(err);
             });
+        }
+
+        function page_count(searchword) {
+          console.log(preword);
+          if (preword === searchword) {
+            page++;
+          } else {
+            page = 1;
+          }
+          console.log(searchword);
+          remove();
+        }
+
+        function remove() {
+          if (page === 1) {
+            $('.lists__item').remove();
+          }
+          $('.result').remove();
+          $('.datacomment').remove();
+        };
+
+        function search_result(result, searchword) {
+          if (searchword === preword && result.count === 0) {
+            nomore()
+          } else if (result.count === 0) {
+            nothing();
+          }
+          preword = searchword;
+          $.each(result.Items, function(index, item) {
+            books(item);
+          });
+        }
+
+        function books(book) {
+            $('.lists').prepend("<li class='lists__item'><div class='lists__item__inner'><a href='' class='lists__item__link' target='_blank'><img src='" + book.Item.largeImageUrl + "' class='lists__item__img' alt=''><p class='lists__item__detail'>作品名：" + book.Item.title + "</p><p class='lists__item__detail'>作者：" + book.Item.author + "</p><p class='lists__item__detail'>出版社：" + book.Item.publishrName + "</p></a></div></li>");
+          };
+
+        function nomore() {
+            $('.lists').before('<div class="result">検索結果がこれ以上ありません。</div>');
+            $('.result').css('text-align', 'center').css('margin-bottom', '50px');
+        }
+
+        function nothing(){
+            $('.lists').before('<div class="result">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。</div>');
+            $('.result').css('text-align', 'center').css('margin-bottom', '50px');
+        }
+
+        function error(err){
+          $('.search').after('<div class="datacomment"><p class="message"></p></div>');
+            if (err.responseJSON.error_description === "keyword must be set") {
+              typein();
+            } else if(err.responseJSON.error_description === "keyword length must be over 2 characters"){
+              text_luck();
+            } else {
+              not_connect();
+          }
+           console.log('hey');
+        };
+
+        function typein() {
+          $('.message').html('文字を入力してください');
+        };
+
+        function text_luck() {
+          $('.message').html('2文字以上入力してください');
+        };
+
+        function not_connect() {
+          $('.message').html('通信が接続できません。<br>通信状況を確認してください。');
+        };
+
+        $('#js-search-button').on('click', function() {
+          var searchword = $('#js-search-word').val();
+          request(searchword);
           });
       });
 
